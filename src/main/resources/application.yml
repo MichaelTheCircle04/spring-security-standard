@@ -1,0 +1,6 @@
+server:
+    port: 8081
+users: src/main/resources/users.json
+logging:
+  level:
+    org.springframework.security: TRACE

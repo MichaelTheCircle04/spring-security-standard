@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>Roles</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <span id="id" th:text="${id}" hidden></span>
+        <span id="adminAuthority" th:text="${adminAuthority}" hidden></span>
+        <table id="roles" hidden>
+            <tr th:each="role : ${roles}">
+                <td th:text="${role}"></td>
+            </tr> 
+        </table>
+        <form id="userRoles">
+            <h1>User infomation: </h1>
+            <p><b th:text="${username}"></b>       <span>USER</span> <input type="checkbox" name="userRole" id="ROLE_USER"></p>
+            <p><b>INFORMATION</b>                  <span>ADMIN</span>  <input type="checkbox" name="userRole" id="ROLE_ADMIN"></p>
+            <p><b>INFORMATION</b>                  <span>SUPERADMIN</span>  <input type="checkbox" name="userRole" id="ROLE_SUPERADMIN"></p>
+            <p><b>INFORMATION</b>                  <span>MASTER</span>   <input type="checkbox" name="userRole" id="ROLE_MASTER"></p>
+            <button button type="button" onclick="change()">Change roles</button>
+        </form>
+        <script>
+            var rows = document.getElementById("roles").querySelectorAll("tr");
+            var roles = [];
+            rows.forEach(r => roles.push(r.querySelector("td").innerHTML));
+            roles.forEach(r => document.getElementById(r).checked = true);
+            
+            function change() {
+                var adminAuthority = document.getElementById("adminAuthority").innerHTML;
+                console.log(adminAuthority);
+                if (adminAuthority === "ROLE_ADMIN") {
+                    console.error("ADMINS HAS NO RIGHTS TO CHANGE ROLES");
+                    //location.reload();
+                    return;
+                }
+                var rolesForAdd = [];
+                var rolesForDelete = [];
+                var checkboxes = document.getElementsByName("userRole");
+                checkboxes.forEach(r => console.log(r));
+                checkboxes.forEach(r => {
+                    if (r.checked) {
+                        if (!roles.includes(r.id)) {
+                            rolesForAdd.push(r.id);
+                        }
+                    } else {
+                        if (roles.includes(r.id)) {
+                            rolesForDelete.push(r.id);
+                        }
+                    }
+                });
+                console.log("ROLES FOR ADD: ");
+                rolesForAdd.forEach(r => console.log(r));
+                console.log("ROLES FOR DELETE: ");
+                rolesForDelete.forEach(r => console.log(r));
+                if (rolesForAdd.length === 0 && rolesForDelete.length === 0) {
+                    console.log("Seems like here nothing to change");
+                    return;
+                }
+                if (rolesForDelete.includes("ROLE_USER")) {
+                    console.error("you can't delete ROLE_USER");
+                    //location.reload();
+                    return;
+                }
+                if (rolesForAdd.length !== 0 && rolesForDelete.length !== 0) {
+                    console.error("It's impossible to simultaneously delete and give roles");
+                    console.error("you has no rights to change roles that way");
+                    //location.reload();
+                    return;
+                }
+                if (adminAuthority === "ROLE_SUPERADMIN" && (rolesForAdd.includes("ROLE_SUPERADMIN") || rolesForAdd.includes("ROLE_MASTER"))) {
+                    console.error("Superadmin can't give superadmin and master rights");
+                    console.error("you has no rights to change roles that way");
+                    //location.reload();
+                    return;
+                }
+                if (adminAuthority === "ROLE_SUPERADMIN" && (rolesForDelete.includes("ROLE_SUPERADMIN") || rolesForDelete.includes("ROLE_MASTER"))) {
+                    console.error("Superadmin can't delete superadmin and master rights");
+                    console.error("you has no rights to change roles that way");
+                    //location.reload();
+                    return;
+                }
+                try {
+                    rolesForAdd.forEach(r => {
+                        if (r === "ROLE_SUPERADMIN") {
+                            if (!rolesForAdd.includes("ROLE_ADMIN") && !roles.includes("ROLE_ADMIN")) {
+                                throw { message: "error" };
+                            }
+                        }
+                        if (r === "ROLE_MASTER") {
+                            if (!rolesForAdd.includes("ROLE_SUPERADMIN") && !roles.includes("ROLE_SUPERADMIN")) {
+                                throw { message: "error" };
+                            }
+                        }
+                    });
+                } catch(e) {
+                    console.log(e.message);
+                    //location.reload();
+                    return;
+                }    
+                rolesForDelete.reverse();
+                try {
+                    rolesForDelete.forEach(r => {
+                        if (r === "ROLE_SUPERADMIN") {
+                            if (roles.includes("ROLE_MASTER")) {
+                                throw { message: "you dont know what are you trying to do slave" };
+                            }
+                        }
+                        if (r === "ROLE_ADMIN") {
+                            if (roles.includes("ROLE_SUPERADMIN")) {
+                                throw { message: "em wwwwhat?" };
+                            }
+                        }
+                        roles.pop();
+                    });
+                } catch (e) {
+                    //location.reload();
+                    console.log("roles: " + roles);
+                    console.log("rolesForDelete: " + rolesForDelete);
+                    console.error(e.message);
+                    return;
+                }
+                
+                rolesForAdd.forEach(r => console.log(r));
+                rolesForDelete.forEach(r => console.log(r));
+                var data = {
+                    rolesForAdd: rolesForAdd,
+                    rolesForDelete: rolesForDelete
+                };
+                
+                var jsonData = JSON.stringify(data);
+                console.log(jsonData);
+                fetch("http://localhost:8081/admin/change/role/" + document.getElementById("id").innerHTML, {
+                    method: "POST",
+                    headers: {
+                        "Content-type": "application/json"
+                    },
+                    body: jsonData
+                });
+                
+                location.reload();
+            }
+        </script>
+    </body>
+</html>

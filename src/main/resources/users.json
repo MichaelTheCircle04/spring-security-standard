@@ -1,0 +1,22 @@
+[
+{
+    "username": "i.ivanon",
+    "password": "password",
+    "roles": ["USER"]
+},
+{
+    "username": "u.rucus",
+    "password": "43211234",
+    "roles": ["USER", "ADMIN"]  
+},
+{
+    "username": "s.spiegel",
+    "password": "12344321",
+    "roles": ["USER", "ADMIN", "SUPERADMIN"]
+},
+{
+    "username": "m.trifonov",
+    "password": "wordpass",
+    "roles": ["USER", "ADMIN", "SUPERADMIN", "MASTER"]
+}
+]

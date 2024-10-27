@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>Registration</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <form id="userData" th:action="@{/registration}" method="post">
+            <p id="message"></p>
+            <b>Enter username: </b><input type="text" name="username" placeholder="Username" required/><br>
+            <b>Enter password: </b><input type="password" name="password" placeholder="Password" required/><br>
+            <b>Enter password again: </b><input type="password" name="passwordAgain" placeholder="Password" required/><br>
+            <input type="submit" name="submit" value="Register">
+            <button type="button" onclick="submitForm()">Register</button>
+            <button type="button" onclick="login()">Login</button>
+	</form>
+        <script>
+            //document.getElementById("userData").addEventListener("submit", submitForm);
+            //document.getElementById("userData").addEventListener("submit", submitForm);
+            function login() {
+                window.location = "http://localhost:8081/login";
+            }
+            
+            function cleanForm(flag) {
+                var form = document.getElementById("userData");
+                if (flag) {
+                    form.elements.username.value = "";
+                }
+                form.elements.password.value = "";
+                form.elements.passwordAgain.value = "";
+            }
+            
+            function submitForm() {
+                var form = document.getElementById("userData");
+                if (form.elements.password.value !== form.elements.passwordAgain.value) {
+                    cleanForm(false);
+                    document.getElementById("message").innerHTML = "Passwords didn't match";
+                    document.getElementById("message").style = "color: red";
+                    return;
+                }
+                var data = {
+                    username: form.elements.username.value,
+                    password: form.elements.password.value,
+                    roles: ["USER"]
+                };
+                var jsonData = JSON.stringify(data);
+                fetch(form.action, {
+                    method: "POST",
+                    headers: {
+                        "Content-type": "application/json"
+                    },
+                    body: jsonData
+                }).then(resp => {
+                      if (resp.status === 200) {
+                          document.getElementById("message").innerHTML = "Registered";
+                          document.getElementById("message").style = "color: green";
+                          cleanForm(true);
+                          return Promise.reject("Done");
+                      }
+                      return Promise.resolve(resp);
+                }).then(resp => resp.json())
+                  .then(resp => {
+                      document.getElementById("message").innerHTML = resp.exception;
+                      document.getElementById("message").style = "color: red"; 
+                      cleanForm(true);
+                }).catch(message => console.log(message));
+            }
+        </script>    
+    </body>
+</html>
