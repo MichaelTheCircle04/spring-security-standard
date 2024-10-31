@@ -4,6 +4,8 @@
         <title>Roles</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="csrf-header" data-th-content="${_csrf.headerName}">
+        <meta name="csrf-token" data-th-content="${_csrf.token}">
     </head>
     <body>
         <span id="id" th:text="${id}" hidden></span>
@@ -12,33 +14,38 @@
             <tr th:each="role : ${roles}">
                 <td th:text="${role}"></td>
             </tr> 
-        </table>
+        </table> 
         <form id="userRoles">
             <h1>User infomation: </h1>
-            <p><b th:text="${username}"></b>       <span>USER</span> <input type="checkbox" name="userRole" id="ROLE_USER"></p>
-            <p><b>INFORMATION</b>                  <span>ADMIN</span>  <input type="checkbox" name="userRole" id="ROLE_ADMIN"></p>
-            <p><b>INFORMATION</b>                  <span>SUPERADMIN</span>  <input type="checkbox" name="userRole" id="ROLE_SUPERADMIN"></p>
-            <p><b>INFORMATION</b>                  <span>MASTER</span>   <input type="checkbox" name="userRole" id="ROLE_MASTER"></p>
+            <p><b th:text="${username}"></b></p>       
+            <span>USER</span> <input type="checkbox" name="userRole" id="ROLE_USER"></p>
+            <span>ADMIN</span>  <input type="checkbox" name="userRole" id="ROLE_ADMIN"></p>
+            <span>SUPERADMIN</span>  <input type="checkbox" name="userRole" id="ROLE_SUPERADMIN"></p>
+            <span>MASTER</span>   <input type="checkbox" name="userRole" id="ROLE_MASTER"></p>
             <button button type="button" onclick="change()">Change roles</button>
+            <button button type="button" onclick="reload()">Reload page</button>
         </form>
         <script>
+            var csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+            var header = document.querySelector('meta[name="csrf-header"]').content;
             var rows = document.getElementById("roles").querySelectorAll("tr");
             var roles = [];
             rows.forEach(r => roles.push(r.querySelector("td").innerHTML));
             roles.forEach(r => document.getElementById(r).checked = true);
             
+            function reload() {
+                location.reload();
+            }
+            
             function change() {
                 var adminAuthority = document.getElementById("adminAuthority").innerHTML;
-                console.log(adminAuthority);
                 if (adminAuthority === "ROLE_ADMIN") {
-                    console.error("ADMINS HAS NO RIGHTS TO CHANGE ROLES");
-                    //location.reload();
+                    console.error("Admin doesn't have rights to change roles");
                     return;
                 }
                 var rolesForAdd = [];
                 var rolesForDelete = [];
                 var checkboxes = document.getElementsByName("userRole");
-                checkboxes.forEach(r => console.log(r));
                 checkboxes.forEach(r => {
                     if (r.checked) {
                         if (!roles.includes(r.id)) {
@@ -50,53 +57,41 @@
                         }
                     }
                 });
-                console.log("ROLES FOR ADD: ");
-                rolesForAdd.forEach(r => console.log(r));
-                console.log("ROLES FOR DELETE: ");
-                rolesForDelete.forEach(r => console.log(r));
                 if (rolesForAdd.length === 0 && rolesForDelete.length === 0) {
                     console.log("Seems like here nothing to change");
                     return;
                 }
                 if (rolesForDelete.includes("ROLE_USER")) {
-                    console.error("you can't delete ROLE_USER");
-                    //location.reload();
+                    console.error("You can't delete ROLE_USER");
                     return;
                 }
                 if (rolesForAdd.length !== 0 && rolesForDelete.length !== 0) {
-                    console.error("It's impossible to simultaneously delete and give roles");
-                    console.error("you has no rights to change roles that way");
-                    //location.reload();
+                    console.error("You cannot give and delete roles at the same time");
                     return;
                 }
                 if (adminAuthority === "ROLE_SUPERADMIN" && (rolesForAdd.includes("ROLE_SUPERADMIN") || rolesForAdd.includes("ROLE_MASTER"))) {
                     console.error("Superadmin can't give superadmin and master rights");
-                    console.error("you has no rights to change roles that way");
-                    //location.reload();
                     return;
                 }
                 if (adminAuthority === "ROLE_SUPERADMIN" && (rolesForDelete.includes("ROLE_SUPERADMIN") || rolesForDelete.includes("ROLE_MASTER"))) {
                     console.error("Superadmin can't delete superadmin and master rights");
-                    console.error("you has no rights to change roles that way");
-                    //location.reload();
                     return;
                 }
                 try {
                     rolesForAdd.forEach(r => {
                         if (r === "ROLE_SUPERADMIN") {
                             if (!rolesForAdd.includes("ROLE_ADMIN") && !roles.includes("ROLE_ADMIN")) {
-                                throw { message: "error" };
+                                throw { message: "It's impossible to give superadmin rights without admin rights" };
                             }
                         }
                         if (r === "ROLE_MASTER") {
                             if (!rolesForAdd.includes("ROLE_SUPERADMIN") && !roles.includes("ROLE_SUPERADMIN")) {
-                                throw { message: "error" };
+                                throw { message: "It's impossible to give master rights without superadmin rights" };
                             }
                         }
                     });
                 } catch(e) {
-                    console.log(e.message);
-                    //location.reload();
+                    console.error(e.message);
                     return;
                 }    
                 rolesForDelete.reverse();
@@ -104,42 +99,34 @@
                     rolesForDelete.forEach(r => {
                         if (r === "ROLE_SUPERADMIN") {
                             if (roles.includes("ROLE_MASTER")) {
-                                throw { message: "you dont know what are you trying to do slave" };
+                                throw { message: "It's impossible to delete superadmin rights from master" };
                             }
                         }
                         if (r === "ROLE_ADMIN") {
                             if (roles.includes("ROLE_SUPERADMIN")) {
-                                throw { message: "em wwwwhat?" };
+                                throw { message: "It's impossible to delete admin rights from superadmin" };
                             }
                         }
                         roles.pop();
                     });
                 } catch (e) {
-                    //location.reload();
-                    console.log("roles: " + roles);
-                    console.log("rolesForDelete: " + rolesForDelete);
                     console.error(e.message);
                     return;
                 }
-                
-                rolesForAdd.forEach(r => console.log(r));
-                rolesForDelete.forEach(r => console.log(r));
+         
                 var data = {
                     rolesForAdd: rolesForAdd,
                     rolesForDelete: rolesForDelete
                 };
-                
+                headers = {"Content-type": "application/json"};
+                headers[header] = csrfToken;
                 var jsonData = JSON.stringify(data);
                 console.log(jsonData);
                 fetch("http://localhost:8081/admin/change/role/" + document.getElementById("id").innerHTML, {
                     method: "POST",
-                    headers: {
-                        "Content-type": "application/json"
-                    },
+                    headers: headers,
                     body: jsonData
                 });
-                
-                location.reload();
             }
         </script>
     </body>

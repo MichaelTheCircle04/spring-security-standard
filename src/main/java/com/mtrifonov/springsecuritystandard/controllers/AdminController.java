@@ -34,11 +34,7 @@ public class AdminController {
     
     @GetMapping("/{id}")
     public String produceUserRolesPage(@AuthenticationPrincipal UserDetails admin, 
-                                       @PathVariable int id, Model model) {
-        admin
-            .getAuthorities()
-            .stream()
-            .forEach(a -> System.out.println(a.getAuthority()));
+            @PathVariable int id, Model model) {
         
         collector.collect(id, model, admin);
         return "user-roles-page";
@@ -46,7 +42,7 @@ public class AdminController {
     
     @PostMapping("/change/role/{id}")
     public ResponseEntity<Void> changeRole(@RequestBody Roles roles, 
-                                           @PathVariable int id) {
+            @PathVariable int id) {
         
         roleChangeService.changeRoles(roles.rolesForAdd, roles.rolesForDelete, id);
         return ResponseEntity.ok().build();

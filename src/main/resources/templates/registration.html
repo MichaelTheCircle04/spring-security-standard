@@ -4,6 +4,8 @@
         <title>Registration</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="csrf-header" data-th-content="${_csrf.headerName}">
+        <meta name="csrf-token" data-th-content="${_csrf.token}">
     </head>
     <body>
         <form id="userData" th:action="@{/registration}" method="post">
@@ -11,17 +13,17 @@
             <b>Enter username: </b><input type="text" name="username" placeholder="Username" required/><br>
             <b>Enter password: </b><input type="password" name="password" placeholder="Password" required/><br>
             <b>Enter password again: </b><input type="password" name="passwordAgain" placeholder="Password" required/><br>
-            <input type="submit" name="submit" value="Register">
             <button type="button" onclick="submitForm()">Register</button>
             <button type="button" onclick="login()">Login</button>
 	</form>
         <script>
-            //document.getElementById("userData").addEventListener("submit", submitForm);
-            //document.getElementById("userData").addEventListener("submit", submitForm);
+            var csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+            var header = document.querySelector('meta[name="csrf-header"]').content;
+            
             function login() {
                 window.location = "http://localhost:8081/login";
             }
-            
+
             function cleanForm(flag) {
                 var form = document.getElementById("userData");
                 if (flag) {
@@ -30,7 +32,7 @@
                 form.elements.password.value = "";
                 form.elements.passwordAgain.value = "";
             }
-            
+
             function submitForm() {
                 var form = document.getElementById("userData");
                 if (form.elements.password.value !== form.elements.passwordAgain.value) {
@@ -45,11 +47,11 @@
                     roles: ["USER"]
                 };
                 var jsonData = JSON.stringify(data);
+                headers = {"Content-type": "application/json"};
+                headers[header] = csrfToken;
                 fetch(form.action, {
                     method: "POST",
-                    headers: {
-                        "Content-type": "application/json"
-                    },
+                    headers: headers,
                     body: jsonData
                 }).then(resp => {
                       if (resp.status === 200) {

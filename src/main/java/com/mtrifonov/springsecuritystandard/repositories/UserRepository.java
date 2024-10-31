@@ -44,11 +44,14 @@ public class UserRepository {
         String sql = """
                      SELECT *
                      FROM users
+                     JOIN authorities USING(username)
                      WHERE username = ?
+                     ORDER BY username
                      """;
         
         try {
-            return jdbcTemplate.queryForMap(sql, username);
+            var res = (List<Map<String, Object>>) jdbcTemplate.queryForObject(sql, uprm, username);
+            return res.get(0);
         } catch (DataAccessException e) {
             return null;
         }
