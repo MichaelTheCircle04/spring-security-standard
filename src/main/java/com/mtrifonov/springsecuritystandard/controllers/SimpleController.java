@@ -28,16 +28,21 @@ public class SimpleController {
         this.service = service;
         this.validator = validator;
     }
-   
-    @GetMapping("/login")
-    public String produceLoginPage() {
-        return "login";
-    }   
+     
+    @GetMapping("main")
+    public String produceMainPage() {
+        return "main";
+    }
     
     @GetMapping("/api")
     public String produceApiPage() {
         return "api";
     }  
+    
+    @GetMapping("/login")
+    public String produceLoginPage() {
+        return "login";
+    } 
     
     @GetMapping("/registration")
     public String produceRegistrationPage() {

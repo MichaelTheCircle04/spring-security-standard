@@ -11,6 +11,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 /**
  *
@@ -22,11 +23,12 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {        
         http.formLogin(a -> a.loginPage("/login"));
-        http.authorizeHttpRequests(a -> a.requestMatchers("/login", "/registration")
-                .permitAll()
+        http.logout(l -> l.logoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET")).logoutSuccessUrl("/login"));
+        http.exceptionHandling(e -> e.accessDeniedPage("/access-denied"));
+        http.authorizeHttpRequests(a -> a.requestMatchers("/access-denied", "main").permitAll()
+                .requestMatchers("/login", "/registration").anonymous()
                 .requestMatchers("/admin/**").hasRole("ADMIN")
-                .anyRequest()
-                .authenticated());        
+                .anyRequest().authenticated());        
         return http.build();
     }
 
