@@ -1,9 +1,10 @@
 package com.mtrifonov.springsecuritystandard.validators;
 
-import com.mtrifonov.springsecuritystandard.UserRepresentation;
-import com.mtrifonov.springsecuritystandard.controllers.RegistrationException;
+import com.mtrifonov.springsecuritystandard.UserDTO;
+import com.mtrifonov.springsecuritystandard.exceptions.RegistrationException;
 import com.mtrifonov.springsecuritystandard.repositories.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
+import java.sql.SQLException;
 import org.springframework.stereotype.Service;
 
 /**
@@ -11,18 +12,13 @@ import org.springframework.stereotype.Service;
  * @Mikhail Trifonov
  */
 @Service
+@AllArgsConstructor
 public class RegistrationRequestValidator {
-    
     
     private final UserRepository userRepo;
     
-    @Autowired
-    public RegistrationRequestValidator(UserRepository userRepo) {
-        this.userRepo = userRepo;
-    }
-    
-    public void validate(UserRepresentation user) {
-        if (userRepo.findUserByUsername(user.getUsername()) != null) {
+    public void validate(UserDTO user) throws SQLException {
+        if (userRepo.findUserByUsername(user.getUsername()).isPresent()) {
             throw new RegistrationException("User with name " + user.getUsername() + " already exist");
         } 
     }

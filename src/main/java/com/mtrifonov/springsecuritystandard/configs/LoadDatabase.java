@@ -2,15 +2,22 @@ package com.mtrifonov.springsecuritystandard.configs;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mtrifonov.springsecuritystandard.UserRepresentation;
+import com.mtrifonov.springsecuritystandard.UserDTO;
 import com.mtrifonov.springsecuritystandard.services.RegistrationService;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+
+import javax.sql.DataSource;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.jdbc.datasource.init.DataSourceInitializer;
+import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 
 /**
  *
@@ -33,9 +40,21 @@ public class LoadDatabase {
     public CommandLineRunner initDatabase() throws IOException {
         
         return args -> {
-            File src = new File(path);
-            List<UserRepresentation> users = mapper.readValue(src, new TypeReference<List<UserRepresentation>>(){});
-            service.register(users.toArray());            
+            var src = new File(path);
+            var users = mapper.readValue(src, new TypeReference<List<UserDTO>>(){});
+            service.register(users.toArray(new UserDTO[0]));            
         };
-    }    
+    }
+
+    @Bean
+    @Profile("test")
+    public DataSourceInitializer dataSourceInitializer(DataSource ds) {
+        var popultator = new ResourceDatabasePopulator();
+        popultator.addScript(new ClassPathResource("schema.sql"));
+        popultator.execute(ds);
+        var initializer = new DataSourceInitializer();
+        initializer.setDataSource(ds);
+        initializer.setDatabasePopulator(popultator);
+        return initializer;
+    }  
 }

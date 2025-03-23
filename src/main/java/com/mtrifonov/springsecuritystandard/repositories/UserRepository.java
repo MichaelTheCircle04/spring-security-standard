@@ -1,30 +1,26 @@
 package com.mtrifonov.springsecuritystandard.repositories;
 
-import java.util.List;
-import java.util.Map;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
+import java.sql.SQLException;
+import java.util.Optional;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
+import com.mtrifonov.springsecuritystandard.UserDTO;
+import com.mtrifonov.springsecuritystandard.mappers.UsernameRolesRowMapper;
+
+import lombok.AllArgsConstructor;
 
 /**
  *
  * @Mikhail Trifonov
  */
 @Repository
+@AllArgsConstructor
 public class UserRepository {
     
     private final JdbcTemplate jdbcTemplate;
-    private final RowMapper uprm;
     
-    @Autowired
-    public UserRepository(JdbcTemplate jdbcTemplate, RowMapper uprm) {
-        this.jdbcTemplate = jdbcTemplate;
-        this.uprm = uprm;
-    }
-    
-    public Map<String, Object> findUserById(int id) {
+    public Optional<UserDTO> findUserById(int id) throws SQLException {
+
         String sql = """
                      SELECT *
                      FROM users 
@@ -32,15 +28,18 @@ public class UserRepository {
                      WHERE id = ?
                      ORDER BY username
                      """;
-        try {
-            var res = (List<Map<String, Object>>) jdbcTemplate.queryForObject(sql, uprm, id);
-            return res.get(0);
-        } catch (DataAccessException e) {
-            return null;
+            
+        var rs = jdbcTemplate.queryForRowSet(sql, id);
+        var res = UsernameRolesRowMapper.exctractList(rs);
+        if (res.isEmpty()) { 
+            return Optional.empty();
+        } else {
+            return Optional.of(res.get(0));
         }
     }
     
-    public Map<String, Object> findUserByUsername(String username) {
+    public Optional<UserDTO> findUserByUsername(String username) throws SQLException {
+
         String sql = """
                      SELECT *
                      FROM users
@@ -49,11 +48,12 @@ public class UserRepository {
                      ORDER BY username
                      """;
         
-        try {
-            var res = (List<Map<String, Object>>) jdbcTemplate.queryForObject(sql, uprm, username);
-            return res.get(0);
-        } catch (DataAccessException e) {
-            return null;
+        var rs = jdbcTemplate.queryForRowSet(sql, username);
+        var res = UsernameRolesRowMapper.exctractList(rs);
+        if (res.isEmpty()) { 
+            return Optional.empty();
+        } else {
+            return Optional.of(res.get(0));
         }
     }
 }

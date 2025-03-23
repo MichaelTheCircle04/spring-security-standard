@@ -1,7 +1,6 @@
 package com.mtrifonov.springsecuritystandard.services;
 
-import com.mtrifonov.springsecuritystandard.UserRepresentation;
-import java.util.List;
+import com.mtrifonov.springsecuritystandard.UserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -25,8 +24,7 @@ public class RegistrationService {
         this.encoder = encoder;
     }
     
-    public void register(Object... args) {
-        var users = List.of(args).stream().map(a -> (UserRepresentation) a).toList();
+    public void register(UserDTO[] users) {
         
         for (var user : users) {
             var userDetails = User.builder()

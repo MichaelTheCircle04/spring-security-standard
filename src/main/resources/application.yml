@@ -1,6 +1,18 @@
 server:
     port: 8081
-users: src/main/resources/users.json
+
+users: src/main/resources/users.json #c:/vscode/spring-security-standard/src/main/resources/users.json #
+
 logging:
-  level:
-    org.springframework.security: TRACE
+    level:
+        org.springframework.security: TRACE
+
+spring:
+    sql:
+        init:
+            mode: always
+    datasource:
+        url: jdbc:h2:mem:database
+        username: user
+        password: password
+        driver: org.h2.Driver

@@ -1,54 +1,54 @@
 package com.mtrifonov.springsecuritystandard.mappers;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.stereotype.Component;
+import org.springframework.jdbc.support.rowset.SqlRowSet;
+import com.mtrifonov.springsecuritystandard.UserDTO;
 
 /**
  *
  * @Mikhail Trifonov
  */
-@Component
-public class UsernameRolesRowMapper implements RowMapper {
 
-    @Override
-    public List<Map<String, Object>> mapRow(ResultSet rs, int rowNum) throws SQLException {
-        List<Map<String, Object>> result = new ArrayList<>();
-        Map<String, Object> map = new HashMap<>();
-        if (rs.isBeforeFirst()) {
-            rs.next();
+public class UsernameRolesRowMapper {
+
+    public static List<UserDTO> exctractList(SqlRowSet rs) throws SQLException {
+
+
+        var result = new ArrayList<UserDTO>();
+        boolean last = !rs.first();
+
+        while (!last) {
+            last = convertRowToUserRepresentation(rs, result);
         }
-        while (true) {
-            convertRowToMap(rs, map, result);
-            if (!rs.next()) {
-                break;
-            }
-        }
+
         return result;
     }
     
-    
-    private void convertRowToMap(ResultSet rs, Map<String, Object> map, List result) throws SQLException {
-        String username = rs.getString("username");
-        if (!map.isEmpty() && map.get("username").equals(username)) {
-            var roles = (List<String>) map.get("roles");
-            roles.add(rs.getString("authority"));
-            if (!result.contains(map)) {
-                result.add(map);
+    private static boolean convertRowToUserRepresentation(SqlRowSet rs, List<UserDTO> result) throws SQLException {
+
+        var username = rs.getString("username");
+        
+        var builder = UserDTO
+            .builder()
+            .id(rs.getInt("id"))
+            .username(username)
+            .password(rs.getString("password"));
+
+        var roles = rs.getString("authority");
+
+        boolean last = true;
+        while (rs.next()) {
+
+            if (rs.getString("username") == username) {
+                roles += ", " + rs.getString("authority");
+            } else {
+                last = false;
             }
-            return;
-        } else if (!map.isEmpty()) {
-            map = new HashMap<>();
         }
-        map.put("username", username);
-        var roles = new ArrayList<String>();
-        roles.add(rs.getString("authority"));
-        map.put("roles", roles);
-        result.add(map);
+
+        result.add(builder.roles(roles.split(", ")).build());
+        return last;
     }
 }

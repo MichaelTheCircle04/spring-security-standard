@@ -1,6 +1,12 @@
 package com.mtrifonov.springsecuritystandard.controllers;
 
+import com.mtrifonov.springsecuritystandard.Role;
+import com.mtrifonov.springsecuritystandard.services.DataCollector;
 import com.mtrifonov.springsecuritystandard.services.RoleChangeService;
+import com.mtrifonov.springsecuritystandard.validators.RoleChangeValidator;
+import lombok.AllArgsConstructor;
+import java.sql.SQLException;
+import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,35 +24,34 @@ import org.springframework.web.bind.annotation.RequestMapping;
  */
 @Controller
 @RequestMapping("/admin")
+@AllArgsConstructor
 public class AdminController {
-    
+
     private final DataCollector collector;
     private final RoleChangeService roleChangeService;
-
-    public AdminController(DataCollector collector, RoleChangeService roleChangeService) {
-        this.collector = collector;
-        this.roleChangeService = roleChangeService;
-    }
     
-    public String produceAdminPage() {
+    @GetMapping
+    public String produceAdminPage() { //covered
         return "admin";
     }
     
-    @GetMapping("/{id}")
-    public String produceUserRolesPage(@AuthenticationPrincipal UserDetails admin, 
-            @PathVariable int id, Model model) {
+    @GetMapping("/{userId}")
+    public String produceUserRolesPage(
+        @PathVariable Integer userId, Model model) throws SQLException { //covered
         
-        collector.collect(id, model, admin);
-        return "user-roles-page";
+        collector.collect(userId, model);
+        return "user-roles";
     }
     
     @PostMapping("/change/role/{id}")
-    public ResponseEntity<Void> changeRole(@RequestBody Roles roles, 
-            @PathVariable int id) {
+    public ResponseEntity<Void> changeRole(
+        @AuthenticationPrincipal UserDetails admin,
+        @RequestBody Roles roles, @PathVariable Integer id) { //covered
         
+        RoleChangeValidator.validate(admin, roles.currentRoles, roles.rolesForAdd, roles.rolesForDelete);
         roleChangeService.changeRoles(roles.rolesForAdd, roles.rolesForDelete, id);
         return ResponseEntity.ok().build();
     }
     
-    public record Roles(String[] rolesForAdd, String[] rolesForDelete){}
+    public record Roles(List<Role> currentRoles, List<Role> rolesForAdd, List<Role> rolesForDelete){}
 }

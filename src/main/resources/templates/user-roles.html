@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>Roles</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="csrf-header" data-th-content="${_csrf.headerName}">
+        <meta name="csrf-token" data-th-content="${_csrf.token}">
+    </head>
+    <body>
+        <span id="id" th:text="${user.id}" hidden></span>
+        <span id="adminAuthority" th:text="${adminAuthority}" hidden></span>
+        <table id="roles" hidden>
+            <tr th:each="role : ${user.roles}">
+                <td th:text="${role}"></td>
+            </tr> 
+        </table> 
+        <form id="userRoles">
+            <p id="message"></p>
+            <h1>User infomation: </h1>
+            <p><b th:text="${user.username}"></b></p>       
+            <span>USER</span> <input type="checkbox" name="userRole" id="ROLE_USER"></p>
+            <span>ADMIN</span>  <input type="checkbox" name="userRole" id="ROLE_ADMIN"></p>
+            <span>SUPERADMIN</span>  <input type="checkbox" name="userRole" id="ROLE_SUPERADMIN"></p>
+            <span>MASTER</span>   <input type="checkbox" name="userRole" id="ROLE_MASTER"></p>
+            <button button type="button" onclick="change()">Change roles</button>
+            <button button type="button" onclick="reload()">Reload page</button>
+        </form>
+        <script src="js/roles.js"></script>
+    </body>
+</html>

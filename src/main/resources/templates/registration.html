@@ -15,59 +15,7 @@
             <b>Enter password again: </b><input type="password" name="passwordAgain" placeholder="Password" required/><br>
             <button type="button" onclick="submitForm()">Register</button>
             <button type="button" onclick="login()">Login</button>
-	</form>
-        <script>
-            var csrfToken = document.querySelector('meta[name="csrf-token"]').content;
-            var header = document.querySelector('meta[name="csrf-header"]').content;
-            
-            function login() {
-                window.location = "http://localhost:8081/login";
-            }
-
-            function cleanForm(flag) {
-                var form = document.getElementById("userData");
-                if (flag) {
-                    form.elements.username.value = "";
-                }
-                form.elements.password.value = "";
-                form.elements.passwordAgain.value = "";
-            }
-
-            function submitForm() {
-                var form = document.getElementById("userData");
-                if (form.elements.password.value !== form.elements.passwordAgain.value) {
-                    cleanForm(false);
-                    document.getElementById("message").innerHTML = "Passwords didn't match";
-                    document.getElementById("message").style = "color: red";
-                    return;
-                }
-                var data = {
-                    username: form.elements.username.value,
-                    password: form.elements.password.value,
-                    roles: ["USER"]
-                };
-                var jsonData = JSON.stringify(data);
-                headers = {"Content-type": "application/json"};
-                headers[header] = csrfToken;
-                fetch(form.action, {
-                    method: "POST",
-                    headers: headers,
-                    body: jsonData
-                }).then(resp => {
-                      if (resp.status === 200) {
-                          document.getElementById("message").innerHTML = "Registered";
-                          document.getElementById("message").style = "color: green";
-                          cleanForm(true);
-                          return Promise.reject("Done");
-                      }
-                      return Promise.resolve(resp);
-                }).then(resp => resp.json())
-                  .then(resp => {
-                      document.getElementById("message").innerHTML = resp.exception;
-                      document.getElementById("message").style = "color: red"; 
-                      cleanForm(true);
-                }).catch(message => console.log(message));
-            }
-        </script>    
+	    </form>
+        <script src="js/reg.js"></script>    
     </body>
 </html>

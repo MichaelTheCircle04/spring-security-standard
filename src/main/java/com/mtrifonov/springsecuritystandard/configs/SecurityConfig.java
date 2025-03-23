@@ -3,8 +3,6 @@ package com.mtrifonov.springsecuritystandard.configs;
 import javax.sql.DataSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -35,14 +33,6 @@ public class SecurityConfig {
     @Bean
     public UserDetailsService userDetailsManager(DataSource ds) {        
         return new JdbcUserDetailsManager(ds);        
-    }
-        
-    @Bean
-    public DataSource dataSource() {
-        return new EmbeddedDatabaseBuilder()
-                .setType(EmbeddedDatabaseType.H2)
-                .addScript("classpath:schema.sql")
-                .build();
     }
     
     @Bean 
