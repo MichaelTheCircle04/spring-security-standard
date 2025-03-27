@@ -2,21 +2,21 @@
 {
     "username": "i.ivanov",
     "password": "password",
-    "roles": ["USER"]
+    "roles": ["ROLE_USER"]
 },
 {
     "username": "u.rucus",
     "password": "43211234",
-    "roles": ["USER", "ADMIN"]  
+    "roles": ["ROLE_USER", "ROLE_ADMIN"]  
 },
 {
     "username": "s.spiegel",
     "password": "12344321",
-    "roles": ["USER", "ADMIN", "SUPERADMIN"]
+    "roles": ["ROLE_USER", "ROLE_ADMIN", "ROLE_SUPERADMIN"]
 },
 {
     "username": "m.trifonov",
     "password": "wordpass",
-    "roles": ["USER", "ADMIN", "SUPERADMIN", "MASTER"]
+    "roles": ["ROLE_USER", "ROLE_ADMIN", "ROLE_SUPERADMIN", "ROLE_MASTER"]
 }
 ]

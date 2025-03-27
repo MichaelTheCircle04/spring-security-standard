@@ -2,12 +2,8 @@ package com.mtrifonov.springsecuritystandard.services;
 
 import com.mtrifonov.springsecuritystandard.Role;
 import com.mtrifonov.springsecuritystandard.repositories.RoleRepository;
-
 import lombok.AllArgsConstructor;
-
 import java.util.List;
-
-
 import org.springframework.stereotype.Service;
 
 /**

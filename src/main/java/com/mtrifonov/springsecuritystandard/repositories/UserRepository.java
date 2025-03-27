@@ -6,7 +6,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import com.mtrifonov.springsecuritystandard.UserDTO;
 import com.mtrifonov.springsecuritystandard.mappers.UsernameRolesRowMapper;
-
 import lombok.AllArgsConstructor;
 
 /**
@@ -42,9 +41,9 @@ public class UserRepository {
 
         String sql = """
                      SELECT *
-                     FROM users
-                     JOIN authorities USING(username)
-                     WHERE username = ?
+                     FROM users u
+                     JOIN authorities a USING(username)
+                     WHERE u.username = ?
                      ORDER BY username
                      """;
         

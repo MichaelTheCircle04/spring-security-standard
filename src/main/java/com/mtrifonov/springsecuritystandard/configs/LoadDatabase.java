@@ -40,9 +40,9 @@ public class LoadDatabase {
     public CommandLineRunner initDatabase() throws IOException {
         
         return args -> {
-            var src = new File(path);
-            var users = mapper.readValue(src, new TypeReference<List<UserDTO>>(){});
-            service.register(users.toArray(new UserDTO[0]));            
+            var src = new ClassPathResource("users.json");
+            var users = mapper.readValue(src.getFile(), new TypeReference<List<UserDTO>>(){});
+            service.register(users.toArray(UserDTO[]::new));            
         };
     }
 

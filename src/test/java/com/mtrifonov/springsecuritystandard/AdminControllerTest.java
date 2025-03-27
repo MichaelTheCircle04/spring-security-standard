@@ -20,6 +20,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import com.mtrifonov.springsecuritystandard.configs.LoadDatabase;
 import com.mtrifonov.springsecuritystandard.configs.SecurityConfig;
+import com.mtrifonov.springsecuritystandard.controllers.AccessDeniedController;
 import com.mtrifonov.springsecuritystandard.controllers.AdminController;
 import com.mtrifonov.springsecuritystandard.repositories.RoleRepository;
 import com.mtrifonov.springsecuritystandard.repositories.UserRepository;
@@ -27,7 +28,7 @@ import com.mtrifonov.springsecuritystandard.services.DataCollector;
 import com.mtrifonov.springsecuritystandard.services.RegistrationService;
 import com.mtrifonov.springsecuritystandard.services.RoleChangeService;
 
-@WebMvcTest(controllers = AdminController.class)
+@WebMvcTest(controllers = {AdminController.class, AccessDeniedController.class})
 @ContextConfiguration(classes = 
     {
         LoadDatabase.class, SecurityConfig.class, 
@@ -59,7 +60,7 @@ public class AdminControllerTest {
     void getAdminPage_withoutAdminRights() throws Exception {
 
         mvc.perform(get("/admin"))
-            .andExpect(status().isForbidden());
+            .andExpectAll(status().isForbidden(), forwardedUrl("/access-denied"));
     }
 
     @Test
@@ -102,9 +103,9 @@ public class AdminControllerTest {
         var content = 
                     """
                     {
-                        \"currentRoles\": [\"ROLE_USER\"],
-                        \"rolesForAdd\": [\"ROLE_ADMIN\", \"ROLE_SUPERADMIN\"],
-                        \"rolesForDelete\": []
+                        "currentRoles": ["ROLE_USER"],
+                        "rolesForAdd": ["ROLE_ADMIN", "ROLE_SUPERADMIN"],
+                        "rolesForDelete": []
                     }
                     """;
 
@@ -133,9 +134,9 @@ public class AdminControllerTest {
         var content = 
                     """
                     {
-                        \"currentRoles\": [\"ROLE_USER\", \"ROLE_ADMIN\", \"ROLE_SUPERADMIN\"],
-                        \"rolesForAdd\": [],
-                        \"rolesForDelete\": [\"ROLE_ADMIN\", \"ROLE_SUPERADMIN\"]
+                        "currentRoles": ["ROLE_USER", "ROLE_ADMIN", "ROLE_SUPERADMIN"],
+                        "rolesForAdd": [],
+                        "rolesForDelete": ["ROLE_ADMIN", "ROLE_SUPERADMIN"]
                     }
                     """;
 
@@ -153,7 +154,6 @@ public class AdminControllerTest {
                 content().string(containsString("<td>ROLE_USER</td>"))
                 ).andReturn().getResponse().getContentAsString();
 
-        System.out.println(body);
         assertFalse(body.contains("<td>ROLE_ADMIN</td>") || body.contains("<td>ROLE_SUPERADMIN</td>"));
     }
 
@@ -164,9 +164,9 @@ public class AdminControllerTest {
         var content = 
                     """
                     {
-                        \"currentRoles\": [\"ROLE_USER\"],
-                        \"rolesForAdd\": [\"ROLE_ADMIN\", \"ROLE_SUPERADMIN\"],
-                        \"rolesForDelete\": []
+                        "currentRoles": ["ROLE_USER"],
+                        "rolesForAdd": ["ROLE_ADMIN", "ROLE_SUPERADMIN"],
+                        "rolesForDelete": []
                     }
                     """;
 
@@ -188,9 +188,9 @@ public class AdminControllerTest {
         var content = 
                     """
                     {
-                        \"currentRoles\": [\"ROLE_USER\", \"ROLE_ADMIN\", \"ROLE_SUPERADMIN\"],
-                        \"rolesForAdd\": [],
-                        \"rolesForDelete\": [\"ROLE_SUPERADMIN\"]
+                        "currentRoles": ["ROLE_USER", "ROLE_ADMIN", "ROLE_SUPERADMIN"],
+                        "rolesForAdd": [],
+                        "rolesForDelete": ["ROLE_SUPERADMIN"]
                     }
                     """;
 
@@ -214,9 +214,9 @@ public class AdminControllerTest {
         var content = 
                     """
                     {
-                        \"currentRoles\": [\"ROLE_USER\", \"ROLE_ADMIN\"],
-                        \"rolesForAdd\": [\"ROLE_SUPERADMIN\"],
-                        \"rolesForDelete\": [\"ROLE_ADMIN\"]
+                        "currentRoles": ["ROLE_USER", "ROLE_ADMIN"],
+                        "rolesForAdd": ["ROLE_SUPERADMIN"],
+                        "rolesForDelete": ["ROLE_ADMIN"]
                     }
                     """; 
         
@@ -229,9 +229,9 @@ public class AdminControllerTest {
         content = 
                     """
                     {
-                        \"currentRoles\": [\"ROLE_USER\"],
-                        \"rolesForAdd\": [\"ROLE_SUPERADMIN\"],
-                        \"rolesForDelete\": []
+                        "currentRoles": ["ROLE_USER"],
+                        "rolesForAdd": ["ROLE_SUPERADMIN"],
+                        "rolesForDelete": []
                     }
                     """;
         
@@ -244,9 +244,9 @@ public class AdminControllerTest {
         content = 
                     """
                     {
-                        \"currentRoles\": [\"ROLE_USER\", \"ROLE_ADMIN\", \"ROLE_SUPERADMIN\"],
-                        \"rolesForAdd\": [],
-                        \"rolesForDelete\": [\"ROLE_ADMIN\"]
+                        "currentRoles": ["ROLE_USER", "ROLE_ADMIN", "ROLE_SUPERADMIN"],
+                        "rolesForAdd": [],
+                        "rolesForDelete": ["ROLE_ADMIN"]
                     }
                     """;
         

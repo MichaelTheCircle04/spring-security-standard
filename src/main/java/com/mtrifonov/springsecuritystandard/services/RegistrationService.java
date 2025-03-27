@@ -30,7 +30,7 @@ public class RegistrationService {
             var userDetails = User.builder()
                     .username(user.getUsername())
                     .password(user.getPassword())
-                    .roles(user.getRoles())
+                    .roles(user.getRoles().stream().map(r -> r.name().split("_")[1]).toArray(String[]::new))
                     .passwordEncoder(e -> encoder.encode(e))
                     .build();           
             manager.createUser(userDetails);

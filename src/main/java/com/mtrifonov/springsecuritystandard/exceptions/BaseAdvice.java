@@ -14,20 +14,17 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 public class BaseAdvice {
     
     @ExceptionHandler(RegistrationException.class)
-    public ResponseEntity<Map<String, String>> handleIllegalArgumentException(RegistrationException e) {
-        e.printStackTrace();
+    public ResponseEntity<Map<String, String>> handleRegistrationException(RegistrationException e) {
         return ResponseEntity.badRequest().body(Map.of("exception", e.getMessage()));
     }
 
     @ExceptionHandler(NoSuchElementException.class)
     public ResponseEntity<Map<String, String>> handleNoSuchElementException(NoSuchElementException e) {
-        e.printStackTrace();
         return ResponseEntity.badRequest().body(Map.of("exception", e.getMessage()));
     }
 
-    @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<Map<String, String>> handleIllegalArgumentException(RuntimeException e) {
-        e.printStackTrace();
+    @ExceptionHandler(RoleChangeException.class)
+    public ResponseEntity<Map<String, String>> handleRoleChangeException(RoleChangeException e) {
         return ResponseEntity.badRequest().body(Map.of("exception", e.getMessage()));
     }
 }

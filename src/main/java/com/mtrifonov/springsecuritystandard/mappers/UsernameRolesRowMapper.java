@@ -3,14 +3,15 @@ package com.mtrifonov.springsecuritystandard.mappers;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
+import com.mtrifonov.springsecuritystandard.Role;
 import com.mtrifonov.springsecuritystandard.UserDTO;
 
 /**
  *
  * @Mikhail Trifonov
  */
-
 public class UsernameRolesRowMapper {
 
     public static List<UserDTO> exctractList(SqlRowSet rs) throws SQLException {
@@ -48,7 +49,8 @@ public class UsernameRolesRowMapper {
             }
         }
 
-        result.add(builder.roles(roles.split(", ")).build());
+        var rolesList = Stream.of(roles.split(", ")).map(r -> Role.valueOf(r)).toList();
+        result.add(builder.roles(rolesList).build());
         return last;
     }
 }

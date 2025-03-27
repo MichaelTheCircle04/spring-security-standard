@@ -9,7 +9,6 @@
     </head>
     <body>
         <span id="id" th:text="${user.id}" hidden></span>
-        <span id="adminAuthority" th:text="${adminAuthority}" hidden></span>
         <table id="roles" hidden>
             <tr th:each="role : ${user.roles}">
                 <td th:text="${role}"></td>
@@ -26,6 +25,6 @@
             <button button type="button" onclick="change()">Change roles</button>
             <button button type="button" onclick="reload()">Reload page</button>
         </form>
-        <script src="js/roles.js"></script>
+        <script src="./js/roles.js"></script>
     </body>
 </html>

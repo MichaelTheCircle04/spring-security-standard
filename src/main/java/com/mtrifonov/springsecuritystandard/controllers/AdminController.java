@@ -31,13 +31,13 @@ public class AdminController {
     private final RoleChangeService roleChangeService;
     
     @GetMapping
-    public String produceAdminPage() { //covered
+    public String produceAdminPage() { 
         return "admin";
     }
     
     @GetMapping("/{userId}")
     public String produceUserRolesPage(
-        @PathVariable Integer userId, Model model) throws SQLException { //covered
+        @PathVariable Integer userId, Model model) throws SQLException { 
         
         collector.collect(userId, model);
         return "user-roles";
@@ -46,7 +46,7 @@ public class AdminController {
     @PostMapping("/change/role/{id}")
     public ResponseEntity<Void> changeRole(
         @AuthenticationPrincipal UserDetails admin,
-        @RequestBody Roles roles, @PathVariable Integer id) { //covered
+        @RequestBody Roles roles, @PathVariable Integer id) { 
         
         RoleChangeValidator.validate(admin, roles.currentRoles, roles.rolesForAdd, roles.rolesForDelete);
         roleChangeService.changeRoles(roles.rolesForAdd, roles.rolesForDelete, id);

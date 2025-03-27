@@ -1,7 +1,5 @@
 server:
-    port: 8081
-
-users: src/main/resources/users.json #c:/vscode/spring-security-standard/src/main/resources/users.json #
+    address: "localhost:8080"
 
 logging:
     level:

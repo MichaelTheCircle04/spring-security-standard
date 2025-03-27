@@ -19,7 +19,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 public class SecurityConfig {
    
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {        
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {       
         http.formLogin(a -> a.loginPage("/login"));
         http.logout(l -> l.logoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET")).logoutSuccessUrl("/login"));
         http.exceptionHandling(e -> e.accessDeniedPage("/access-denied"));

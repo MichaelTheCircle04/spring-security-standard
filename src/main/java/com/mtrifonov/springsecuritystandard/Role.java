@@ -3,7 +3,6 @@ package com.mtrifonov.springsecuritystandard;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
-
 import org.springframework.security.core.GrantedAuthority;
 
 /**

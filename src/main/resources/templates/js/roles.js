@@ -45,7 +45,6 @@ function change() {
     headers = { "Content-type": "application/json" };
     headers[header] = csrfToken;
     var jsonData = JSON.stringify(data);
-    //console.log(jsonData);
     
     fetch("http://localhost:8081/admin/change/role/" + document.getElementById("id").innerHTML, {
         method: "POST",
