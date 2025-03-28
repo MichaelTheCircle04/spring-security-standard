@@ -5,7 +5,7 @@ import java.util.Optional;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import com.mtrifonov.springsecuritystandard.UserDTO;
-import com.mtrifonov.springsecuritystandard.mappers.UsernameRolesRowMapper;
+import com.mtrifonov.springsecuritystandard.mappers.UserRowMapper;
 import lombok.AllArgsConstructor;
 
 /**
@@ -29,7 +29,7 @@ public class UserRepository {
                      """;
             
         var rs = jdbcTemplate.queryForRowSet(sql, id);
-        var res = UsernameRolesRowMapper.exctractList(rs);
+        var res = UserRowMapper.exctractList(rs);
         if (res.isEmpty()) { 
             return Optional.empty();
         } else {
@@ -48,7 +48,7 @@ public class UserRepository {
                      """;
         
         var rs = jdbcTemplate.queryForRowSet(sql, username);
-        var res = UsernameRolesRowMapper.exctractList(rs);
+        var res = UserRowMapper.exctractList(rs);
         if (res.isEmpty()) { 
             return Optional.empty();
         } else {
