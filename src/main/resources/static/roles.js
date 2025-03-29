@@ -1,6 +1,6 @@
 console.log("text")
 var csrfToken = document.querySelector('meta[name="csrf-token"]').content;
-var header = document.querySelector('meta[name="csrf-header"]').content;
+var csrfHeader = document.querySelector('meta[name="csrf-header"]').content;
 
 var rows = document.getElementById("roles").querySelectorAll("tr"); //получаем роли из таблицы на html странице
 
@@ -43,10 +43,10 @@ function change() {
     };
     
     headers = { "Content-type": "application/json" };
-    headers[header] = csrfToken;
+    headers[csrfHeader] = csrfToken;
     var jsonData = JSON.stringify(data);
     
-    fetch("http://localhost:8081/admin/change/role/" + document.getElementById("id").innerHTML, {
+    fetch("http://localhost:8080/admin/change/role/" + document.getElementById("id").innerHTML, {
         method: "POST",
         headers: headers,
         body: jsonData

@@ -20,7 +20,6 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import com.mtrifonov.springsecuritystandard.configs.LoadDatabase;
 import com.mtrifonov.springsecuritystandard.configs.SecurityConfig;
-import com.mtrifonov.springsecuritystandard.controllers.AccessDeniedController;
 import com.mtrifonov.springsecuritystandard.controllers.AdminController;
 import com.mtrifonov.springsecuritystandard.repositories.RoleRepository;
 import com.mtrifonov.springsecuritystandard.repositories.UserRepository;
@@ -28,7 +27,7 @@ import com.mtrifonov.springsecuritystandard.services.DataCollector;
 import com.mtrifonov.springsecuritystandard.services.RegistrationService;
 import com.mtrifonov.springsecuritystandard.services.RoleChangeService;
 
-@WebMvcTest(controllers = {AdminController.class, AccessDeniedController.class})
+@WebMvcTest(controllers = AdminController.class)
 @ContextConfiguration(classes = 
     {
         LoadDatabase.class, SecurityConfig.class, 

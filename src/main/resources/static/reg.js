@@ -2,7 +2,7 @@ var csrfToken = document.querySelector('meta[name="csrf-token"]').content;
 var csrfHeader = document.querySelector('meta[name="csrf-header"]').content;
 
 function login() {
-    window.location = "http://localhost:8081/login";
+    window.location = "http://localhost:8080/login";
 }
 
 function cleanForm(flag) {
@@ -31,7 +31,7 @@ function submitForm() {
     var data = {
         username: form.elements.username.value,
         password: form.elements.password.value,
-        roles: ["USER"]
+        roles: ["ROLE_USER"]
     };
 
     var jsonData = JSON.stringify(data);

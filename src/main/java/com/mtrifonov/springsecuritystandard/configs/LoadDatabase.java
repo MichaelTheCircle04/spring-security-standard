@@ -7,7 +7,6 @@ import com.mtrifonov.springsecuritystandard.services.RegistrationService;
 import java.io.IOException;
 import java.util.List;
 import javax.sql.DataSource;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,9 +21,6 @@ import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
  */
 @Configuration
 public class LoadDatabase {
-    
-    @Value("${users}")
-    private String path;
     
     private final ObjectMapper mapper = new ObjectMapper();
     private final RegistrationService service;

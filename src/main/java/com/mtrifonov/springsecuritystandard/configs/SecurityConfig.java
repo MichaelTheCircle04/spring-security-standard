@@ -23,10 +23,10 @@ public class SecurityConfig {
         http.formLogin(a -> a.loginPage("/login"));
         http.logout(l -> l.logoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET")).logoutSuccessUrl("/login"));
         http.exceptionHandling(e -> e.accessDeniedPage("/access-denied"));
-        http.authorizeHttpRequests(a -> a.requestMatchers("/access-denied", "main").permitAll()
+        http.authorizeHttpRequests(a -> a.requestMatchers("/user", "/users/**").authenticated()
                 .requestMatchers("/login", "/registration").anonymous()
                 .requestMatchers("/admin/**").hasRole("ADMIN")
-                .anyRequest().authenticated());        
+                .anyRequest().permitAll());        
         return http.build();
     }
 

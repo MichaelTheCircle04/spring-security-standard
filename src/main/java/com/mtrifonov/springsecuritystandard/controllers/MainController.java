@@ -31,7 +31,7 @@ public class MainController {
     private final RegistrationService service;
     private final UserRepository userRepository;
     private final RegistrationRequestValidator validator;
-    @Value("${server.address}")
+    @Value("${server.name}")
     private String address;
      
     @GetMapping("/main") 
